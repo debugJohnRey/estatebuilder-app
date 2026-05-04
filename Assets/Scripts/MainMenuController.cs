@@ -7,7 +7,7 @@ public class MainMenuController : MonoBehaviour
     public void OnPlayButtonClicked()
     {
         // Replace "GameScene" with your actual game scene name
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("GenderMenu");
     }
 
     // Call this from the Settings button
