@@ -12,15 +12,11 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private CharacterController controller;
     private Animator anim;
-    private Camera _cam;
 
     void Start()
     {
         anim = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-        _cam = Camera.main;
-        if (_cam == null)
-            _cam = FindObjectOfType<Camera>();
     }
 
     void OnMove(InputValue value)
@@ -53,9 +49,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 2. Move and Rotate
-        Vector3 camForward = _cam != null ? Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized : Vector3.forward;
-        Vector3 camRight   = _cam != null ? Vector3.ProjectOnPlane(_cam.transform.right,   Vector3.up).normalized : Vector3.right;
-        Vector3 move       = camForward * moveInput.y + camRight * moveInput.x;
+        Vector3 move = new Vector3(moveInput.x, 0, moveInput.y);
         
         if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
         velocity.y += gravity * Time.deltaTime;

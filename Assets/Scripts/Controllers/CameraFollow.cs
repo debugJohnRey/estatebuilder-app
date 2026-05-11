@@ -1,36 +1,16 @@
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+public class CameraFollow : MonoBehaviour 
 {
-    public Transform target;
-    public Vector3 offset = new Vector3(0, 5, -10);
-    public float panSpeed = 0.2f;
-    public float zoomSpeed = 0.05f;
-    public float minDistance = 3f;
-    public float maxDistance = 30f;
+    public Transform target; // Drag your player here
+    public Vector3 offset = new Vector3(0, 5, -10); // The distance from the player
 
-    private float _yaw;
-    private float _elevation;
-    private float _distance;
-    private Vector3 _lastInputPos;
-    private bool _isPanning;
-    private int _panFingerId = -1;
-
-    void Start()
+    void LateUpdate() 
     {
-        _distance = offset.magnitude;
-        _elevation = Mathf.Atan2(offset.y, -offset.z) * Mathf.Rad2Deg;
-        _yaw = target != null ? target.eulerAngles.y : 0f;
-    }
+        // Move the camera to the player's position plus the offset
+        transform.position = target.position + offset;
 
-    void LateUpdate()
-    {
-        if (target == null) return;
-
-        HandleInput();
-
-        Quaternion rot = Quaternion.Euler(_elevation, _yaw, 0f);
-        transform.position = target.position + rot * Vector3.back * _distance;
+        // Keep the camera pointed at the player
         transform.LookAt(target);
     }
 
