@@ -7,9 +7,11 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 10f;
     public float rotationSpeed = 720f;
     public float gravity = -9.81f;
+    public float jumpHeight = 1.5f;
 
     private Vector2 moveInput;
     private Vector3 velocity;
+    private bool jumpRequested = false;
     private CharacterController controller;
     private Animator anim;
     private Camera _cam;
@@ -28,14 +30,26 @@ public class PlayerController : MonoBehaviour
         moveInput = value.Get<Vector2>();
     }
 
+    // Called by Input System Jump action (bind Space in Input Actions asset)
+    void OnJump(InputValue value)
+    {
+        RequestJump();
+    }
+
+    // Called by JumpBtn's OnClick in the Canvas
+    public void RequestJump()
+    {
+        if (controller.isGrounded)
+            jumpRequested = true;
+    }
+
     void Update()
     {
         float inputMagnitude = moveInput.magnitude;
         float currentSpeed = walkSpeed;
 
         // 1. Determine if Running or Walking
-        // Change this line in your Update() function:
-        if (inputMagnitude > 0.8f) // Lowered from 0.9f
+        if (inputMagnitude > 0.8f)
         {
             anim.SetBool("isRunning", true);
             anim.SetBool("isWalking", false);
@@ -54,10 +68,18 @@ public class PlayerController : MonoBehaviour
 
         // 2. Move and Rotate
         Vector3 camForward = _cam != null ? Vector3.ProjectOnPlane(_cam.transform.forward, Vector3.up).normalized : Vector3.forward;
-        Vector3 camRight   = _cam != null ? Vector3.ProjectOnPlane(_cam.transform.right,   Vector3.up).normalized : Vector3.right;
-        Vector3 move       = camForward * moveInput.y + camRight * moveInput.x;
-        
+        Vector3 camRight = _cam != null ? Vector3.ProjectOnPlane(_cam.transform.right, Vector3.up).normalized : Vector3.right;
+        Vector3 move = camForward * moveInput.y + camRight * moveInput.x;
+
         if (controller.isGrounded && velocity.y < 0) velocity.y = -2f;
+
+        // Apply jump
+        if (jumpRequested && controller.isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            jumpRequested = false;
+        }
+
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(move * currentSpeed * Time.deltaTime);

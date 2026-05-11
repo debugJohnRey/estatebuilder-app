@@ -4,36 +4,46 @@ using TMPro;
 public class CurrencyManager : MonoBehaviour
 {
     public static CurrencyManager Instance;
-    public TMP_Text currencyText;
-    public int startingMoney = 10000;
-    private int currentMoney;
 
-    void Awake() { Instance = this; }
+    [Header("Starting Money")]
+    public int startingAmount = 100000;
+
+    [Header("UI")]
+    public TextMeshProUGUI currencyText;  // drag the Text (TMP) next to the coin icon
+
+    private int _balance;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else { Destroy(gameObject); return; }
+    }
 
     void Start()
     {
-        currentMoney = PlayerPrefs.GetInt("Money", startingMoney);
-        UpdateUI();
+        _balance = startingAmount;
+        RefreshUI();
     }
 
     public void AddMoney(int amount)
     {
-        currentMoney += amount;
-        PlayerPrefs.SetInt("Money", currentMoney);
-        UpdateUI();
+        _balance += amount;
+        RefreshUI();
     }
 
     public bool SpendMoney(int amount)
     {
-        if (currentMoney < amount) return false;
-        currentMoney -= amount;
-        PlayerPrefs.SetInt("Money", currentMoney);
-        UpdateUI();
+        if (_balance < amount) return false;
+        _balance -= amount;
+        RefreshUI();
         return true;
     }
 
-    void UpdateUI()
+    public int GetBalance() => _balance;
+
+    void RefreshUI()
     {
-        currencyText.text = "\u20B1" + currentMoney.ToString("N0");
+        if (currencyText != null)
+            currencyText.text = _balance.ToString("N0");   // "100,000"
     }
 }
