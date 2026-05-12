@@ -5,7 +5,7 @@ public class CurrencyManager : MonoBehaviour
 {
     public static CurrencyManager Instance;
     public TMP_Text currencyText;
-    public int startingMoney = 10000;
+    public int startingMoney = 100000;
     private int currentMoney;
 
     void Awake() { Instance = this; }
@@ -34,6 +34,6 @@ public class CurrencyManager : MonoBehaviour
 
     void UpdateUI()
     {
-        currencyText.text = "\u20B1" + currentMoney.ToString("N0");
+        currencyText.text = currentMoney.ToString("N0");
     }
 }
